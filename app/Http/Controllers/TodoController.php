@@ -9,7 +9,14 @@ class TodoController extends Controller
 {
     public function index(Request $request)
     {
-        $todos = Todo::where('user_id', auth()->id())->get(['id', 'title', 'description']);
+        $query = Todo::where('user_id', auth()->id());
+
+        // age toye request search bashe, title ro filter mikonim
+        if ($request->has('search')) {
+            $query->where('title', 'like', '%' . $request->search . '%');
+        }
+
+        $todos = $query->get(['id', 'title', 'description']);
 
         return response()->json($todos, 200);
     }
